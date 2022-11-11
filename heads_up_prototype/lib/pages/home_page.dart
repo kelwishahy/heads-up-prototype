@@ -10,12 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List tasks = [
-    ['Do Readings', DateTime(2022, 11, 19), 3],
-    ['Leetcode Practice', DateTime(2022, 12, 12), 60],
-    ['Midterm', DateTime(2022, 11, 17), 10],
-    ['Quiz', DateTime(2022, 11, 24), 4],
-  ];
+  List tasks = [];
 
   final _taskNameController = TextEditingController();
   final _hoursToCompleteController = TextEditingController();
@@ -57,6 +52,21 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
+  //dictate task
+  void dictateTask() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AddTaskDialog(
+            taskNameController: _taskNameController,
+            hoursToCompleteController: _hoursToCompleteController,
+            onSave: saveNewTask,
+            onCancel: () => Navigator.of(context).pop(),
+            setDate: setDueDate,
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,11 +74,25 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: const Text('Heads Up'),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: addTask,
-          backgroundColor: const Color(0xff2652cd),
-          foregroundColor: Colors.white,
-          child: const Icon(Icons.add),
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          verticalDirection: VerticalDirection.down,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              onPressed: dictateTask,
+              backgroundColor: const Color(0xff2652cd),
+              foregroundColor: Colors.white,
+              child: const Icon(Icons.mic),
+            ),
+            const Padding(padding: EdgeInsets.all(8)),
+            FloatingActionButton(
+              onPressed: addTask,
+              backgroundColor: const Color(0xff2652cd),
+              foregroundColor: Colors.white,
+              child: const Icon(Icons.add),
+            ),
+          ],
         ),
         body: ListView.builder(
           itemCount: tasks.length,

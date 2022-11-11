@@ -32,6 +32,7 @@ class AddTaskDialog extends StatelessWidget {
 
           TextField(
               controller: hoursToCompleteController,
+              keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "How many hours will it take?")),
