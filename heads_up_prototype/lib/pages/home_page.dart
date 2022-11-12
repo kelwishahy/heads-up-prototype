@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:heads_up_prototype/components/add_task_dialog.dart';
 import 'package:heads_up_prototype/components/task_card.dart';
+import 'package:heads_up_prototype/pages/dictate_task_page.dart';
+import 'package:intl/intl.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,11 +13,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // Speech to text stuff
+  final SpeechToText _speechToText = SpeechToText();
+  String voice_task = '';
+  String voice_dueDate = '';
+  int voice_hours = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+  }
+
+  void _initSpeech() async {
+    await _speechToText.initialize();
+    setState(() {});
+  }
+
   List tasks = [];
 
   final _taskNameController = TextEditingController();
   final _hoursToCompleteController = TextEditingController();
-  DateTime? dueDate;
+  DateTime dueDate = DateTime.now();
 
   // Set date callback
   setDueDate(DateTime date) {
@@ -28,7 +48,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       tasks.add([
         _taskNameController.text,
-        dueDate,
+        DateFormat.yMMMMd('en_US').format(dueDate),
         int.parse(_hoursToCompleteController.text)
       ]);
     });
@@ -53,18 +73,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   //dictate task
-  void dictateTask() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AddTaskDialog(
-            taskNameController: _taskNameController,
-            hoursToCompleteController: _hoursToCompleteController,
-            onSave: saveNewTask,
-            onCancel: () => Navigator.of(context).pop(),
-            setDate: setDueDate,
-          );
-        });
+  Future<void> dictateTask(BuildContext context) async {
+    final voiceInput = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => DictatePage(
+                stt: _speechToText,
+              )),
+    );
+
+    setState(() {
+      voice_task = voiceInput[0];
+      voice_dueDate = voiceInput[1];
+      voice_hours =
+          int.parse(voiceInput[2].replaceAll(new RegExp(r'[^0-9]'), ''));
+
+      tasks.add([voice_task, voice_dueDate, voice_hours]);
+    });
+
+    debugPrint(tasks.last);
   }
 
   @override
@@ -80,7 +107,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             FloatingActionButton(
-              onPressed: dictateTask,
+              onPressed: () => dictateTask(context),
               backgroundColor: const Color(0xff2652cd),
               foregroundColor: Colors.white,
               child: const Icon(Icons.mic),

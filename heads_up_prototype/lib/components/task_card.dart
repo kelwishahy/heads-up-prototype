@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 class TaskCard extends StatelessWidget {
   final String taskName;
-  final DateTime due;
+  final String due;
   final int hoursToComplete;
 
   const TaskCard(
@@ -29,7 +29,7 @@ class TaskCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Text('Due: ${DateFormat.yMMMMd('en_US').format(due)}',
+                Text('Due: $due',
                     style: const TextStyle(
                         color: Color(0xff2652cd), fontSize: 15)),
                 const SizedBox(width: 8),

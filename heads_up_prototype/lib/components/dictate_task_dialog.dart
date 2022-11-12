@@ -5,6 +5,11 @@ class DictateDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return AlertDialog(
+      backgroundColor: Colors.white,
+      content: SizedBox(
+        height: 300,
+      ),
+    );
   }
 }
