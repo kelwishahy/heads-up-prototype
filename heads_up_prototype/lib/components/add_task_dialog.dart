@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
+import 'package:flutter/services.dart';
 import 'package:heads_up_prototype/components/button.dart';
 
 class AddTaskDialog extends StatelessWidget {
@@ -21,17 +23,26 @@ class AddTaskDialog extends StatelessWidget {
     return AlertDialog(
       backgroundColor: Colors.white,
       content: SizedBox(
-        height: 300,
+        width: 500,
+        height: 315,
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           // get user input
           TextField(
               controller: taskNameController,
+              maxLines: 1,
+              minLines: 1,
+              maxLength: 20,
               decoration: const InputDecoration(
                   border: OutlineInputBorder(), hintText: "What's the task?")),
 
           TextField(
               controller: hoursToCompleteController,
+              maxLength: 3,
+              minLines: 1,
+              inputFormatters: [
+                FilteringTextInputFormatter.deny(RegExp(r'[.]')),
+              ],
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -49,6 +60,7 @@ class AddTaskDialog extends StatelessWidget {
                     lastDate: DateTime(2024));
 
                 setDate(dueDate);
+                dueDate = DateTime.now();
               },
               colour: const Color(0xff2652cd),
             ),

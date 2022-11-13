@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:heads_up_prototype/components/button.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:flutter/foundation.dart';
@@ -67,133 +68,143 @@ class _DictatePageState extends State<DictatePage> {
         appBar: AppBar(
           title: const Text('Add a task'),
         ),
-        body: WillPopScope(
-            onWillPop: () async {
-              Navigator.pop(context, [_task, _dueDate, _hoursToComplete]);
-              return true;
-            },
-            child: Column(
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      // Spoken Text
-                      Expanded(
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        body: Column(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  // Spoken Text
+                  Expanded(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                        // Task
+                        SingleChildScrollView(
+                            padding: const EdgeInsets.all(30),
+                            child: Column(
                               children: [
-                            // Task
-                            SingleChildScrollView(
-                                padding: const EdgeInsets.all(30),
-                                child: Column(
-                                  children: [
-                                    const Text(
-                                      "What's the task?",
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 24),
-                                    ),
-                                    Text(
-                                      _task,
-                                      style: const TextStyle(
-                                          color: Color(0xff2652cd),
-                                          fontSize: 24),
-                                    ),
-                                  ],
-                                )),
-                            // Due date
-                            SingleChildScrollView(
-                                padding: const EdgeInsets.all(30),
-                                child: Column(
-                                  children: [
-                                    const Text(
-                                      "When is it due?",
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 24),
-                                    ),
-                                    Text(
-                                      _dueDate,
-                                      style: const TextStyle(
-                                          color: Color(0xff2652cd),
-                                          fontSize: 24),
-                                    ),
-                                  ],
-                                )),
-                            // Hours to Complete
-                            SingleChildScrollView(
-                                padding: const EdgeInsets.all(30),
-                                child: Column(
-                                  children: [
-                                    const Text(
-                                      "How long will it take?",
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 24),
-                                    ),
-                                    Text(
-                                      _hoursToComplete,
-                                      style: const TextStyle(
-                                          color: Color(0xff2652cd),
-                                          fontSize: 24),
-                                    ),
-                                  ],
-                                )),
-                          ])),
+                                const Text(
+                                  "What's the task?",
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 24),
+                                ),
+                                Text(
+                                  _task,
+                                  style: const TextStyle(
+                                      color: Color(0xff2652cd), fontSize: 24),
+                                ),
+                              ],
+                            )),
+                        // Due date
+                        SingleChildScrollView(
+                            padding: const EdgeInsets.all(30),
+                            child: Column(
+                              children: [
+                                const Text(
+                                  "When is it due?",
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 24),
+                                ),
+                                Text(
+                                  _dueDate,
+                                  style: const TextStyle(
+                                      color: Color(0xff2652cd), fontSize: 24),
+                                ),
+                              ],
+                            )),
+                        // Hours to Complete
+                        SingleChildScrollView(
+                            padding: const EdgeInsets.all(30),
+                            child: Column(
+                              children: [
+                                const Text(
+                                  "How long will it take?",
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 24),
+                                ),
+                                Text(
+                                  _hoursToComplete,
+                                  style: const TextStyle(
+                                      color: Color(0xff2652cd), fontSize: 24),
+                                ),
+                              ],
+                            )),
+                      ])),
 
-                      // Microphone Buttons
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          // Task
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: FloatingActionButton(
-                                elevation: 1,
-                                backgroundColor: const Color(0xff2652cd),
-                                foregroundColor: Colors.white,
-                                child: const Icon(Icons.mic),
-                                onPressed: () async {
-                                  current = input.TASK;
-                                  _toggleListening();
-                                }),
-                          ),
+                  // Microphone Buttons
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // Task
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: FloatingActionButton(
+                            elevation: 1,
+                            backgroundColor: const Color(0xff2652cd),
+                            foregroundColor: Colors.white,
+                            child: const Icon(Icons.mic),
+                            onPressed: () async {
+                              current = input.TASK;
+                              _toggleListening();
+                            }),
+                      ),
 
-                          // Due Date
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: FloatingActionButton(
-                                elevation: 1,
-                                backgroundColor: const Color(0xff2652cd),
-                                foregroundColor: Colors.white,
-                                child: const Icon(Icons.mic),
-                                onPressed: () {
-                                  current = input.DUE;
-                                  _toggleListening();
-                                }),
-                          ),
-                          // Hours to complete
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: FloatingActionButton(
-                                elevation: 1,
-                                backgroundColor: const Color(0xff2652cd),
-                                foregroundColor: Colors.white,
-                                child: const Icon(Icons.mic),
-                                onPressed: () {
-                                  current = input.HOURS;
-                                  _toggleListening();
-                                }),
-                          ),
-                        ],
+                      // Due Date
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: FloatingActionButton(
+                            elevation: 1,
+                            backgroundColor: const Color(0xff2652cd),
+                            foregroundColor: Colors.white,
+                            child: const Icon(Icons.mic),
+                            onPressed: () {
+                              current = input.DUE;
+                              _toggleListening();
+                            }),
+                      ),
+                      // Hours to complete
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: FloatingActionButton(
+                            elevation: 1,
+                            backgroundColor: const Color(0xff2652cd),
+                            foregroundColor: Colors.white,
+                            child: const Icon(Icons.mic),
+                            onPressed: () {
+                              current = input.HOURS;
+                              _toggleListening();
+                            }),
                       ),
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                      isListening ? 'Listening...' : 'Press button to answer'),
-                ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child:
+                  Text(isListening ? 'Listening...' : 'Press button to answer'),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Button(
+                    buttonText: 'Cancel',
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    colour: Colors.red),
+                Button(
+                    buttonText: 'Give me a heads up!',
+                    onPressed: () {
+                      Navigator.pop(
+                          context, [_task, _dueDate, _hoursToComplete]);
+                    },
+                    colour: Colors.green),
               ],
-            )));
+            )
+          ],
+        ));
   }
 }

@@ -51,6 +51,7 @@ class _HomePageState extends State<HomePage> {
         DateFormat.yMMMMd('en_US').format(dueDate),
         int.parse(_hoursToCompleteController.text)
       ]);
+      setDueDate(DateTime.now());
     });
     _taskNameController.clear();
     _hoursToCompleteController.clear();
