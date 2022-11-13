@@ -187,21 +187,27 @@ class _DictatePageState extends State<DictatePage> {
                   Text(isListening ? 'Listening...' : 'Press button to answer'),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Button(
-                    buttonText: 'Cancel',
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    colour: Colors.red),
-                Button(
-                    buttonText: 'Give me a heads up!',
-                    onPressed: () {
-                      Navigator.pop(
-                          context, [_task, _dueDate, _hoursToComplete]);
-                    },
-                    colour: Colors.green),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Button(
+                      buttonText: 'Cancel',
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      colour: Colors.red),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Button(
+                      buttonText: 'Give me a heads up!',
+                      onPressed: () {
+                        Navigator.pop(
+                            context, [_task, _dueDate, _hoursToComplete]);
+                      },
+                      colour: Colors.green),
+                ),
               ],
             )
           ],
