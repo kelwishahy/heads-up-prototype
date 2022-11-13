@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:heads_up_prototype/components/button.dart';
@@ -24,45 +23,77 @@ class AddTaskDialog extends StatelessWidget {
       backgroundColor: Colors.white,
       content: SizedBox(
         width: 500,
-        height: 315,
+        height: 350,
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           // get user input
-          TextField(
-              controller: taskNameController,
-              maxLines: 1,
-              minLines: 1,
-              maxLength: 20,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), hintText: "What's the task?")),
-
-          TextField(
-              controller: hoursToCompleteController,
-              maxLength: 3,
-              minLines: 1,
-              inputFormatters: [
-                FilteringTextInputFormatter.deny(RegExp(r'[.]')),
-              ],
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "*Required",
+                style: TextStyle(fontSize: 8, color: Colors.red),
+              ),
+              TextField(
+                controller: taskNameController,
+                maxLines: 1,
+                minLines: 1,
+                maxLength: 20,
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  hintText: "How many hours will it take?")),
+                  hintText: "What's the task?",
+                ),
+              ),
+            ],
+          ),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "*Required",
+                style: TextStyle(fontSize: 8, color: Colors.red),
+              ),
+              TextField(
+                  controller: hoursToCompleteController,
+                  maxLength: 3,
+                  minLines: 1,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'[\.]')),
+                    FilteringTextInputFormatter.deny(RegExp(r'^0+(?=.)')),
+                  ],
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: "How many hours will it take?",
+                  )),
+            ],
+          ),
 
           Container(
             alignment: Alignment.centerLeft,
-            child: Button(
-              buttonText: 'When is it due?',
-              onPressed: () async {
-                dueDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2021),
-                    lastDate: DateTime(2024));
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Button(
+                  buttonText: 'When is it due?',
+                  onPressed: () async {
+                    dueDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2021),
+                        lastDate: DateTime(2024));
 
-                setDate(dueDate);
-                dueDate = DateTime.now();
-              },
-              colour: const Color(0xff2652cd),
+                    setDate(dueDate);
+                    dueDate = DateTime.now();
+                  },
+                  colour: const Color(0xff2652cd),
+                ),
+                const Text(
+                  "Defaults to today's date",
+                  style: TextStyle(fontSize: 8),
+                ),
+              ],
             ),
           ),
 
