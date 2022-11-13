@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:heads_up_prototype/components/button.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:flutter/foundation.dart';
 
 enum input { TASK, DUE, HOURS, NONE }
 
@@ -77,12 +76,19 @@ class _DictatePageState extends State<DictatePage> {
                   Expanded(
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                         // Task
                         SingleChildScrollView(
                             padding: const EdgeInsets.all(30),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                const Text(
+                                  "*Required",
+                                  style:
+                                      TextStyle(fontSize: 8, color: Colors.red),
+                                ),
                                 const Text(
                                   "What's the task?",
                                   style: TextStyle(
@@ -99,7 +105,13 @@ class _DictatePageState extends State<DictatePage> {
                         SingleChildScrollView(
                             padding: const EdgeInsets.all(30),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                const Text(
+                                  "*Required",
+                                  style:
+                                      TextStyle(fontSize: 8, color: Colors.red),
+                                ),
                                 const Text(
                                   "When is it due?",
                                   style: TextStyle(
@@ -116,7 +128,13 @@ class _DictatePageState extends State<DictatePage> {
                         SingleChildScrollView(
                             padding: const EdgeInsets.all(30),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                const Text(
+                                  "*Required",
+                                  style:
+                                      TextStyle(fontSize: 8, color: Colors.red),
+                                ),
                                 const Text(
                                   "How long will it take?",
                                   style: TextStyle(
@@ -203,6 +221,11 @@ class _DictatePageState extends State<DictatePage> {
                   child: Button(
                       buttonText: 'Give me a heads up!',
                       onPressed: () {
+                        if (_task.isEmpty ||
+                            _dueDate.isEmpty ||
+                            _hoursToComplete.isEmpty) {
+                          return;
+                        }
                         Navigator.pop(
                             context, [_task, _dueDate, _hoursToComplete]);
                       },
