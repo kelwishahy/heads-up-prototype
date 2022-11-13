@@ -125,10 +125,22 @@ class _HomePageState extends State<HomePage> {
         body: ListView.builder(
           itemCount: tasks.length,
           itemBuilder: (context, index) {
-            return TaskCard(
-                taskName: tasks[index][0],
-                due: tasks[index][1],
-                hoursToComplete: tasks[index][2]);
+            return Dismissible(
+                key: Key(tasks[index][0]),
+                onDismissed: (direction) {
+                  setState(() {
+                    tasks.removeAt(index);
+                  });
+
+                  // Then show a snackbar.
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Task deleted')));
+                },
+                background: Container(color: Colors.red),
+                child: TaskCard(
+                    taskName: tasks[index][0],
+                    due: tasks[index][1],
+                    hoursToComplete: tasks[index][2]));
           },
         ));
   }

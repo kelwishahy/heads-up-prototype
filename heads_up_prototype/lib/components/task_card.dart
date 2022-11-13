@@ -40,6 +40,10 @@ class TaskCard extends StatelessWidget {
               ],
             ),
           ),
+          const Text(
+            "Swipe to delete",
+            style: TextStyle(fontSize: 8, color: Colors.red),
+          ),
         ],
       ),
     );
