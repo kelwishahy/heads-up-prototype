@@ -33,7 +33,7 @@ class TaskCard extends StatelessWidget {
                     style: const TextStyle(
                         color: Color(0xff2652cd), fontSize: 15)),
                 const SizedBox(width: 8),
-                Text("$hoursToComplete hours to complete",
+                Text("$hoursToComplete minutes to complete",
                     style: const TextStyle(
                         color: Color(0xff2652cd), fontSize: 15)),
                 const SizedBox(width: 8),

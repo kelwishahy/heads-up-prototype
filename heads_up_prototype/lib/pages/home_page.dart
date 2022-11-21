@@ -107,13 +107,13 @@ class _HomePageState extends State<HomePage> {
           verticalDirection: VerticalDirection.down,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            FloatingActionButton(
-              onPressed: () => dictateTask(context),
-              backgroundColor: const Color(0xff2652cd),
-              foregroundColor: Colors.white,
-              child: const Icon(Icons.mic),
-            ),
-            const Padding(padding: EdgeInsets.all(8)),
+            // FloatingActionButton(
+            //   onPressed: () => dictateTask(context),
+            //   backgroundColor: const Color(0xff2652cd),
+            //   foregroundColor: Colors.white,
+            //   child: const Icon(Icons.mic),
+            // ),
+            // const Padding(padding: EdgeInsets.all(8)),
             FloatingActionButton(
               onPressed: addTask,
               backgroundColor: const Color(0xff2652cd),
@@ -133,8 +133,8 @@ class _HomePageState extends State<HomePage> {
                   });
 
                   // Then show a snackbar.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Task deleted')));
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //     const SnackBar(content: Text('Task deleted')));
                 },
                 background: Container(color: Colors.red),
                 child: TaskCard(

@@ -1,16 +1,6 @@
-# heads_up_prototype
+# Heads Up Prototype
+Developed for UBC's CPEN 441: Human Computer Interfaces in Engineering Design
 
-A new Flutter project.
+<a href="https://iconscout.com/icons/h" target="_blank">H Icon</a> by <a href="https://iconscout.com/contributors/twitter-inc">Twitter Emoji</a> on <a href="https://iconscout.com">IconScout</a>
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

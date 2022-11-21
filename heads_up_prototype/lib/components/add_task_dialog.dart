@@ -38,7 +38,7 @@ class AddTaskDialog extends StatelessWidget {
                 controller: taskNameController,
                 maxLines: 1,
                 minLines: 1,
-                maxLength: 20,
+                maxLength: 30,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "What's the task?",
@@ -56,16 +56,21 @@ class AddTaskDialog extends StatelessWidget {
               ),
               TextField(
                   controller: hoursToCompleteController,
-                  maxLength: 3,
+                  maxLength: 2,
                   minLines: 1,
                   inputFormatters: [
                     FilteringTextInputFormatter.deny(RegExp(r'[\.]')),
-                    FilteringTextInputFormatter.deny(RegExp(r'^0+(?=.)')),
+                    FilteringTextInputFormatter.deny(
+                      RegExp(r'^0+(?=.)'),
+                    ),
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^[0-9]*$'),
+                    ),
                   ],
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: "How many hours will it take?",
+                    hintText: "How many minutes will it take?",
                   )),
             ],
           ),
@@ -81,7 +86,7 @@ class AddTaskDialog extends StatelessWidget {
                     dueDate = await showDatePicker(
                         context: context,
                         initialDate: DateTime.now(),
-                        firstDate: DateTime(2021),
+                        firstDate: DateTime.now(),
                         lastDate: DateTime(2024));
 
                     setDate(dueDate);
