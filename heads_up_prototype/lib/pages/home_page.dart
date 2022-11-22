@@ -74,17 +74,28 @@ class _HomePageState extends State<HomePage> {
 
   Duration? elapsedTime;
   void toggleTimer() {
+    // Running time
     if (!stopwatch.isRunning) {
       stopwatch.start();
+      // Update elapsed time variable every second
       Timer.periodic(Duration(seconds: 1), ((timer) {
         setState(() {
           elapsedTime = stopwatch.elapsed;
         });
       }));
+      // Start the time until due timer for each task
+      for (var task in tasks) {
+        task[3].start();
+      }
     } else {
       stopwatch.stop();
+      // Pause the time until due timer for each task
+      for (var task in tasks) {
+        task[3].pause();
+      }
     }
 
+    // Decrement time until due every minute for each task
     if (timer == null) {
       timer = Timer.periodic(const Duration(minutes: 1), (Timer t) {
         setState(() {
