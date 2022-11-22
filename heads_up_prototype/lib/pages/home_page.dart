@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> {
       timer = Timer.periodic(const Duration(minutes: 1), (Timer t) {
         setState(() {
           for (var task in tasks) {
-            if (!task[3].isActive) task[3].start();
+//             if (!task[3].isActive) task[3].start();
             if (task[1] > 0) task[1] -= 1;
           }
         });
