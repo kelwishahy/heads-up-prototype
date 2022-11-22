@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:heads_up_prototype/components/add_task_dialog.dart';
 import 'package:heads_up_prototype/components/task_card.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Timer? timer;
   final Stopwatch stopwatch = Stopwatch();
+  final Map<int, int> deadlineFrequency = HashMap();
 
   @override
   void initState() {
@@ -37,23 +39,60 @@ class _HomePageState extends State<HomePage> {
 
   // Save new task
   void saveNewTask() {
+    int freq = deadlineFrequency.putIfAbsent(
+        int.parse(_timeUntilDueController.text), () => 1);
     double whenToSend = (int.parse(_timeUntilDueController.text) -
-        1.3 * int.parse(_hoursToCompleteController.text));
+        1.3 *
+            (int.parse(_hoursToCompleteController.text) + (freq / 3).floor()));
     setState(() {
       tasks.add([
         _taskNameController.text,
         int.parse(_timeUntilDueController.text),
         int.parse(_hoursToCompleteController.text),
         PausableTimer(
-            Duration(minutes: max(whenToSend.ceil().toInt(), 0)), () => {})
+            Duration(minutes: max(whenToSend.floor().toInt(), 0)), () => {})
       ]);
       tasks.sort((a, b) => a[1].compareTo(b[1]));
-      // setDueDate(DateTime.now());
+
+      for (var task in tasks) {
+        if (deadlineFrequency.containsKey(task[1])) {
+          deadlineFrequency.update(task[1], (value) => value + 1);
+        }
+      }
     });
     _taskNameController.clear();
     _hoursToCompleteController.clear();
     _timeUntilDueController.clear();
     Navigator.of(context).pop();
+  }
+
+  //show added tasks
+  void showTasks() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              backgroundColor: Colors.white,
+              content: SizedBox(
+                width: double.maxFinite,
+                child: ListView.builder(
+                    itemCount: tasks.length,
+                    itemBuilder: (context, index) {
+                      return Dismissible(
+                          key: Key(tasks[index][0]),
+                          onDismissed: (direction) {
+                            setState(() {
+                              tasks.removeAt(index);
+                            });
+                          },
+                          background: Container(color: Colors.red),
+                          child: TaskCard(
+                              taskName: tasks[index][0],
+                              due: tasks[index][1],
+                              hoursToComplete: tasks[index][2]));
+                    }),
+              ));
+        });
   }
 
   // Add task method
@@ -131,6 +170,14 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: const Color(0xff2652cd),
               foregroundColor: Colors.white,
               child: const Icon(Icons.not_started),
+            ),
+            const Padding(padding: EdgeInsets.all(8)),
+            // See inputted tasks
+            FloatingActionButton(
+              onPressed: showTasks,
+              backgroundColor: const Color(0xff2652cd),
+              foregroundColor: Colors.white,
+              child: const Icon(Icons.list),
             ),
             const Padding(padding: EdgeInsets.all(8)),
             // Add task button
