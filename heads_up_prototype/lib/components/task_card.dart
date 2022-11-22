@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 
 class TaskCard extends StatelessWidget {
   final String taskName;
-  final String due;
+  final int due;
   final int hoursToComplete;
 
   const TaskCard(
@@ -29,7 +27,7 @@ class TaskCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Text('Due: $due',
+                Text('Minutes until due: $due',
                     style: const TextStyle(
                         color: Color(0xff2652cd), fontSize: 15)),
                 const SizedBox(width: 8),

@@ -5,6 +5,7 @@ import 'package:heads_up_prototype/components/button.dart';
 class AddTaskDialog extends StatelessWidget {
   final taskNameController;
   final hoursToCompleteController;
+  final timeUntilDueController;
   DateTime? dueDate;
   VoidCallback onSave;
   VoidCallback onCancel;
@@ -13,6 +14,7 @@ class AddTaskDialog extends StatelessWidget {
       {super.key,
       required this.taskNameController,
       required this.hoursToCompleteController,
+      required this.timeUntilDueController,
       required this.onSave,
       required this.onCancel,
       required this.setDate});
@@ -55,6 +57,34 @@ class AddTaskDialog extends StatelessWidget {
                 style: TextStyle(fontSize: 8, color: Colors.red),
               ),
               TextField(
+                  controller: timeUntilDueController,
+                  maxLength: 2,
+                  minLines: 1,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'[\.]')),
+                    FilteringTextInputFormatter.deny(
+                      RegExp(r'^0+(?=.)'),
+                    ),
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^[0-9]*$'),
+                    ),
+                  ],
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: "In how many minutes is it due?",
+                  )),
+            ],
+          ),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "*Required",
+                style: TextStyle(fontSize: 8, color: Colors.red),
+              ),
+              TextField(
                   controller: hoursToCompleteController,
                   maxLength: 2,
                   minLines: 1,
@@ -70,37 +100,37 @@ class AddTaskDialog extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: "How many minutes will it take?",
+                    hintText: "How many minutes will it take to complete?",
                   )),
             ],
           ),
 
-          Container(
-            alignment: Alignment.centerLeft,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Button(
-                  buttonText: 'When is it due?',
-                  onPressed: () async {
-                    dueDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2024));
+          // Container(
+          //   alignment: Alignment.centerLeft,
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       Button(
+          //         buttonText: 'When is it due?',
+          //         onPressed: () async {
+          //           dueDate = await showDatePicker(
+          //               context: context,
+          //               initialDate: DateTime.now(),
+          //               firstDate: DateTime.now(),
+          //               lastDate: DateTime(2024));
 
-                    setDate(dueDate);
-                    dueDate = DateTime.now();
-                  },
-                  colour: const Color(0xff2652cd),
-                ),
-                const Text(
-                  "Defaults to today's date",
-                  style: TextStyle(fontSize: 8),
-                ),
-              ],
-            ),
-          ),
+          //           setDate(dueDate);
+          //           dueDate = DateTime.now();
+          //         },
+          //         colour: const Color(0xff2652cd),
+          //       ),
+          //       const Text(
+          //         "Defaults to today's date",
+          //         style: TextStyle(fontSize: 8),
+          //       ),
+          //     ],
+          //   ),
+          // ),
 
           //buttons
           Container(

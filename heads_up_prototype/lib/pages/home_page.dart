@@ -1,9 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:heads_up_prototype/components/add_task_dialog.dart';
 import 'package:heads_up_prototype/components/task_card.dart';
-import 'package:heads_up_prototype/pages/dictate_task_page.dart';
-import 'package:intl/intl.dart';
-import 'package:speech_to_text/speech_to_text.dart';
+import 'package:pausable_timer/pausable_timer.dart';
+import 'dart:math';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,27 +13,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Speech to text stuff
-  final SpeechToText _speechToText = SpeechToText();
-  String voice_task = '';
-  String voice_dueDate = '';
-  int voice_hours = 1;
+  Timer? timer;
+  final Stopwatch stopwatch = Stopwatch();
 
   @override
   void initState() {
     super.initState();
-    _initSpeech();
-  }
-
-  void _initSpeech() async {
-    await _speechToText.initialize();
-    setState(() {});
   }
 
   List tasks = [];
 
   final _taskNameController = TextEditingController();
   final _hoursToCompleteController = TextEditingController();
+  final _timeUntilDueController = TextEditingController();
   DateTime dueDate = DateTime.now();
 
   // Set date callback
@@ -45,16 +37,22 @@ class _HomePageState extends State<HomePage> {
 
   // Save new task
   void saveNewTask() {
+    double whenToSend = (int.parse(_timeUntilDueController.text) -
+        1.3 * int.parse(_hoursToCompleteController.text));
     setState(() {
       tasks.add([
         _taskNameController.text,
-        DateFormat.yMMMMd('en_US').format(dueDate),
-        int.parse(_hoursToCompleteController.text)
+        int.parse(_timeUntilDueController.text),
+        int.parse(_hoursToCompleteController.text),
+        PausableTimer(
+            Duration(minutes: max(whenToSend.ceil().toInt(), 0)), () => {})
       ]);
-      setDueDate(DateTime.now());
+      tasks.sort((a, b) => a[1].compareTo(b[1]));
+      // setDueDate(DateTime.now());
     });
     _taskNameController.clear();
     _hoursToCompleteController.clear();
+    _timeUntilDueController.clear();
     Navigator.of(context).pop();
   }
 
@@ -66,6 +64,7 @@ class _HomePageState extends State<HomePage> {
           return AddTaskDialog(
             taskNameController: _taskNameController,
             hoursToCompleteController: _hoursToCompleteController,
+            timeUntilDueController: _timeUntilDueController,
             onSave: saveNewTask,
             onCancel: () => Navigator.of(context).pop(),
             setDate: setDueDate,
@@ -73,26 +72,32 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  //dictate task
-  Future<void> dictateTask(BuildContext context) async {
-    final voiceInput = await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => DictatePage(
-                stt: _speechToText,
-              )),
-    );
+  Duration? elapsedTime;
+  void toggleTimer() {
+    if (!stopwatch.isRunning) {
+      stopwatch.start();
+      Timer.periodic(Duration(seconds: 1), ((timer) {
+        setState(() {
+          elapsedTime = stopwatch.elapsed;
+        });
+      }));
+    } else {
+      stopwatch.stop();
+    }
 
-    setState(() {
-      voice_task = voiceInput[0];
-      voice_dueDate = voiceInput[1];
-      voice_hours =
-          int.parse(voiceInput[2].replaceAll(new RegExp(r'[^0-9]'), ''));
-
-      tasks.add([voice_task, voice_dueDate, voice_hours]);
-    });
-
-    debugPrint(tasks.last);
+    if (timer == null) {
+      timer = Timer.periodic(const Duration(minutes: 1), (Timer t) {
+        setState(() {
+          for (var task in tasks) {
+            if (!task[3].isActive) task[3].start();
+            if (task[1] > 0) task[1] -= 1;
+          }
+        });
+      });
+    } else {
+      timer?.cancel();
+      timer = null;
+    }
   }
 
   @override
@@ -107,13 +112,17 @@ class _HomePageState extends State<HomePage> {
           verticalDirection: VerticalDirection.down,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            // FloatingActionButton(
-            //   onPressed: () => dictateTask(context),
-            //   backgroundColor: const Color(0xff2652cd),
-            //   foregroundColor: Colors.white,
-            //   child: const Icon(Icons.mic),
-            // ),
-            // const Padding(padding: EdgeInsets.all(8)),
+            // Elapsed Time
+            Text("${elapsedTime}"),
+            // Timer toggle button
+            FloatingActionButton(
+              onPressed: () => toggleTimer(),
+              backgroundColor: const Color(0xff2652cd),
+              foregroundColor: Colors.white,
+              child: const Icon(Icons.not_started),
+            ),
+            const Padding(padding: EdgeInsets.all(8)),
+            // Add task button
             FloatingActionButton(
               onPressed: addTask,
               backgroundColor: const Color(0xff2652cd),
@@ -122,26 +131,27 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+        // Task cards
         body: ListView.builder(
-          itemCount: tasks.length,
-          itemBuilder: (context, index) {
-            return Dismissible(
-                key: Key(tasks[index][0]),
-                onDismissed: (direction) {
-                  setState(() {
-                    tasks.removeAt(index);
-                  });
-
-                  // Then show a snackbar.
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //     const SnackBar(content: Text('Task deleted')));
-                },
-                background: Container(color: Colors.red),
-                child: TaskCard(
-                    taskName: tasks[index][0],
-                    due: tasks[index][1],
-                    hoursToComplete: tasks[index][2]));
-          },
-        ));
+            itemCount: tasks.length,
+            itemBuilder: (context, index) {
+              if (tasks[index][3].isExpired ||
+                  tasks[index][3].duration <= const Duration(minutes: 1)) {
+                return Dismissible(
+                    key: Key(tasks[index][0]),
+                    onDismissed: (direction) {
+                      setState(() {
+                        tasks.removeAt(index);
+                      });
+                    },
+                    background: Container(color: Colors.red),
+                    child: TaskCard(
+                        taskName: tasks[index][0],
+                        due: tasks[index][1],
+                        hoursToComplete: tasks[index][2]));
+              } else {
+                return Container();
+              }
+            }));
   }
 }
