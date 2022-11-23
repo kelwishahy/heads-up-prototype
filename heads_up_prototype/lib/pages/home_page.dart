@@ -16,7 +16,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Timer? timer;
   final Stopwatch stopwatch = Stopwatch();
-  final Map<int, int> deadlineFrequency = HashMap();
+  // How many notifications are scheduled for a specific time
+  final Map<int, int> notificationFrequency = HashMap();
 
   @override
   void initState() {
@@ -39,31 +40,54 @@ class _HomePageState extends State<HomePage> {
 
   // Save new task
   void saveNewTask() {
-    int freq = deadlineFrequency.putIfAbsent(
-        int.parse(_timeUntilDueController.text), () => 1);
-    double whenToSend = (int.parse(_timeUntilDueController.text) -
-        1.3 *
-            (int.parse(_hoursToCompleteController.text) + (freq / 3).floor()));
+    double whenToSend = int.parse(_timeUntilDueController.text) -
+        1.6 * int.parse(_hoursToCompleteController.text);
+    int notifTime = whenToSend.floor().toInt();
+
+    // Add the notification time to notification frequency map
+    if (notificationFrequency.containsKey(notifTime)) {
+      for (int i = notifTime; i > 0; i--) {
+        if (notificationFrequency.containsKey(i)) {
+          if (notificationFrequency[i]! < 2) {
+            notifTime = i;
+            notificationFrequency.update(notifTime, (value) => value + 1);
+          } else {
+            continue;
+          }
+        } else {
+          notifTime = i;
+          notificationFrequency.putIfAbsent(notifTime, () => 1);
+        }
+      }
+    }
+
+    // Add task to tasks list
     setState(() {
       tasks.add([
         _taskNameController.text,
         int.parse(_timeUntilDueController.text),
         int.parse(_hoursToCompleteController.text),
-        PausableTimer(
-            Duration(minutes: max(whenToSend.floor().toInt(), 0)), () => {})
+        PausableTimer(Duration(minutes: max(notifTime, 0)), () => {})
       ]);
-      tasks.sort((a, b) => a[1].compareTo(b[1]));
 
-      for (var task in tasks) {
-        if (deadlineFrequency.containsKey(task[1])) {
-          deadlineFrequency.update(task[1], (value) => value + 1);
-        }
-      }
+      // sort tasks list by earliest notification time
+      // tasks.sort((a, b) => a[3].duration.compareTo(b[3].duration));
+      tasks.sort((a, b) {
+        int cmp = a[3].duration.compareTo(b[3].duration);
+        if (cmp != 0) return cmp;
+        return a[1].compareTo(b[1]);
+      });
     });
+
+    // clear controllers and return to home page
     _taskNameController.clear();
     _hoursToCompleteController.clear();
     _timeUntilDueController.clear();
     Navigator.of(context).pop();
+    print("------UPDATED TASK NOTIFICATIONS-----");
+    for (var task in tasks) {
+      print(task[0] + ", sending in: " + task[3].duration.inMinutes.toString());
+    }
   }
 
   //show added tasks
@@ -139,7 +163,6 @@ class _HomePageState extends State<HomePage> {
       timer = Timer.periodic(const Duration(minutes: 1), (Timer t) {
         setState(() {
           for (var task in tasks) {
-//             if (!task[3].isActive) task[3].start();
             if (task[1] > 0) task[1] -= 1;
           }
         });
