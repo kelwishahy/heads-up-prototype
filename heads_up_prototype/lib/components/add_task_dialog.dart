@@ -40,7 +40,7 @@ class AddTaskDialog extends StatelessWidget {
                 controller: taskNameController,
                 maxLines: 1,
                 minLines: 1,
-                maxLength: 30,
+                maxLength: 60,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "What's the task?",
@@ -58,18 +58,19 @@ class AddTaskDialog extends StatelessWidget {
               ),
               TextField(
                   controller: timeUntilDueController,
-                  maxLength: 2,
+                  maxLength: 5,
                   minLines: 1,
                   inputFormatters: [
-                    FilteringTextInputFormatter.deny(RegExp(r'[\.]')),
-                    FilteringTextInputFormatter.deny(
-                      RegExp(r'^0+(?=.)'),
-                    ),
+                    // FilteringTextInputFormatter.deny(RegExp(r'[\.]')),
+                    // FilteringTextInputFormatter.deny(
+                    //   RegExp(r'^0+(?=.)'),
+                    // ),
                     FilteringTextInputFormatter.allow(
-                      RegExp(r'^[0-9]*$'),
+                      RegExp(r'^\d+\.?\d{0,2}'),
                     ),
                   ],
-                  keyboardType: TextInputType.number,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: "In how many minutes is it due?",
@@ -86,18 +87,19 @@ class AddTaskDialog extends StatelessWidget {
               ),
               TextField(
                   controller: hoursToCompleteController,
-                  maxLength: 2,
+                  maxLength: 5,
                   minLines: 1,
                   inputFormatters: [
-                    FilteringTextInputFormatter.deny(RegExp(r'[\.]')),
-                    FilteringTextInputFormatter.deny(
-                      RegExp(r'^0+(?=.)'),
-                    ),
+                    // FilteringTextInputFormatter.deny(RegExp(r'[\.]')),
+                    // FilteringTextInputFormatter.deny(
+                    //   RegExp(r'^0+(?=.)'),
+                    // ),
                     FilteringTextInputFormatter.allow(
-                      RegExp(r'^[0-9]*$'),
+                      RegExp(r'^\d+\.?\d{0,2}'),
                     ),
                   ],
-                  keyboardType: TextInputType.number,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: "How many minutes will it take to complete?",

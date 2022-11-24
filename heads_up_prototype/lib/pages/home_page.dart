@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   Timer? timer;
   final Stopwatch stopwatch = Stopwatch();
   // How many notifications are scheduled for a specific time
-  final Map<int, int> notificationFrequency = HashMap();
+  final Map<double, double> notificationFrequency = HashMap();
 
   @override
   void initState() {
@@ -40,22 +40,22 @@ class _HomePageState extends State<HomePage> {
 
   // Save new task
   void saveNewTask() {
-    double whenToSend = int.parse(_timeUntilDueController.text) -
-        1.6 * int.parse(_hoursToCompleteController.text);
-    int notifTime = whenToSend.floor().toInt();
+    double whenToSend = double.parse(_timeUntilDueController.text) -
+        1.7 * double.parse(_hoursToCompleteController.text);
+    double notifTime = whenToSend.floor().toDouble();
 
     // Add the notification time to notification frequency map
     if (notificationFrequency.containsKey(notifTime)) {
-      for (int i = notifTime; i > 0; i--) {
+      for (int i = notifTime.floor(); i > 0; i - 30) {
         if (notificationFrequency.containsKey(i)) {
           if (notificationFrequency[i]! < 2) {
-            notifTime = i;
+            notifTime = i.toDouble();
             notificationFrequency.update(notifTime, (value) => value + 1);
           } else {
             continue;
           }
         } else {
-          notifTime = i;
+          notifTime = i.toDouble();
           notificationFrequency.putIfAbsent(notifTime, () => 1);
         }
       }
@@ -65,13 +65,13 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       tasks.add([
         _taskNameController.text,
-        int.parse(_timeUntilDueController.text),
-        int.parse(_hoursToCompleteController.text),
-        PausableTimer(Duration(minutes: max(notifTime, 0)), () => {})
+        double.parse(_timeUntilDueController.text),
+        double.parse(_hoursToCompleteController.text),
+        PausableTimer(
+            Duration(seconds: max((notifTime * 60).toInt(), 0)), () => {})
       ]);
 
       // sort tasks list by earliest notification time
-      // tasks.sort((a, b) => a[3].duration.compareTo(b[3].duration));
       tasks.sort((a, b) {
         int cmp = a[3].duration.compareTo(b[3].duration);
         if (cmp != 0) return cmp;
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.of(context).pop();
     print("------UPDATED TASK NOTIFICATIONS-----");
     for (var task in tasks) {
-      print(task[0] + ", sending in: " + task[3].duration.inMinutes.toString());
+      print(task[0] + ", sending in: " + task[3].duration.inSeconds.toString());
     }
   }
 
@@ -160,10 +160,14 @@ class _HomePageState extends State<HomePage> {
 
     // Decrement time until due every minute for each task
     if (timer == null) {
-      timer = Timer.periodic(const Duration(minutes: 1), (Timer t) {
+      timer = Timer.periodic(const Duration(seconds: 30), (Timer t) {
         setState(() {
           for (var task in tasks) {
-            if (task[1] > 0) task[1] -= 1;
+            if (task[1] > 0) {
+              task[1] -= 0.5;
+            } else {
+              task[1] = 0;
+            }
           }
         });
       });
@@ -217,7 +221,8 @@ class _HomePageState extends State<HomePage> {
             itemCount: tasks.length,
             itemBuilder: (context, index) {
               if (tasks[index][3].isExpired ||
-                  tasks[index][3].duration <= const Duration(minutes: 1)) {
+                  tasks[index][3].duration <= const Duration(seconds: 60) &&
+                      tasks[index][1].duration >= const Duration(seconds: 0)) {
                 return Dismissible(
                     key: Key(tasks[index][0]),
                     onDismissed: (direction) {
