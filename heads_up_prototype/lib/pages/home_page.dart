@@ -84,10 +84,10 @@ class _HomePageState extends State<HomePage> {
     _hoursToCompleteController.clear();
     _timeUntilDueController.clear();
     Navigator.of(context).pop();
-    print("------UPDATED TASK NOTIFICATIONS-----");
-    for (var task in tasks) {
-      print(task[0] + ", sending in: " + task[3].duration.inSeconds.toString());
-    }
+    // print("------UPDATED TASK NOTIFICATIONS-----");
+    // for (var task in tasks) {
+    //   print(task[0] + ", sending in: " + task[3].duration.inSeconds.toString());
+    // }
   }
 
   //show added tasks
@@ -222,7 +222,7 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) {
               if (tasks[index][3].isExpired ||
                   tasks[index][3].duration <= const Duration(seconds: 60) &&
-                      tasks[index][1].duration >= const Duration(seconds: 0)) {
+                      tasks[index][1].duration > const Duration(seconds: 0)) {
                 return Dismissible(
                     key: Key(tasks[index][0]),
                     onDismissed: (direction) {
