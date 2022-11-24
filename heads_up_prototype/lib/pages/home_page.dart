@@ -222,7 +222,7 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) {
               if (tasks[index][3].isExpired ||
                   tasks[index][3].duration <= const Duration(seconds: 60) &&
-                      tasks[index][1].duration > const Duration(seconds: 0)) {
+                      tasks[index][1] > 0) {
                 return Dismissible(
                     key: Key(tasks[index][0]),
                     onDismissed: (direction) {
